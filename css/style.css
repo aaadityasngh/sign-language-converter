@@ -1,0 +1,482 @@
+/* ================================
+   RESET & BASE
+================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg:        #07080d;
+  --bg2:       #0f1018;
+  --surface:   rgba(255,255,255,0.04);
+  --border:    rgba(255,255,255,0.08);
+  --accent:    #00e5b0;
+  --accent2:   #5b6ef8;
+  --text:      #f0f0f5;
+  --muted:     rgba(240,240,245,0.45);
+  --card-bg:   rgba(255,255,255,0.05);
+  --radius:    16px;
+  --shadow:    0 8px 32px rgba(0,0,0,0.5);
+}
+
+body.light {
+  --bg:        #f2f3f8;
+  --bg2:       #ffffff;
+  --surface:   rgba(0,0,0,0.03);
+  --border:    rgba(0,0,0,0.08);
+  --text:      #0f1018;
+  --muted:     rgba(15,16,24,0.45);
+  --card-bg:   rgba(0,0,0,0.04);
+  --shadow:    0 8px 32px rgba(0,0,0,0.1);
+}
+
+body {
+  font-family: 'Syne', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Noise texture overlay */
+.noise {
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+/* ================================
+   HEADER
+================================ */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 40px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(7,8,13,0.7);
+  border-bottom: 1px solid var(--border);
+}
+
+body.light .header {
+  background: rgba(242,243,248,0.8);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+}
+
+.logo-icon {
+  font-size: 1.5rem;
+  animation: wave 2s infinite;
+}
+
+@keyframes wave {
+  0%, 100% { transform: rotate(0deg); }
+  20%       { transform: rotate(-20deg); }
+  40%       { transform: rotate(10deg); }
+  60%       { transform: rotate(-10deg); }
+}
+
+.theme-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.theme-btn:hover {
+  background: var(--border);
+  transform: scale(1.1);
+}
+
+/* ================================
+   MAIN LAYOUT
+================================ */
+.main {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 60px 24px 80px;
+}
+
+/* ================================
+   HERO
+================================ */
+.hero {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.badge {
+  display: inline-block;
+  background: rgba(0,229,176,0.12);
+  color: var(--accent);
+  border: 1px solid rgba(0,229,176,0.25);
+  border-radius: 100px;
+  padding: 6px 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  margin-bottom: 16px;
+}
+
+.accent {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: 1.1rem;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* ================================
+   INPUT CARD
+================================ */
+.input-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 24px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: border-color 0.3s;
+}
+
+.input-card:focus-within {
+  border-color: rgba(0,229,176,0.35);
+  box-shadow: 0 0 0 4px rgba(0,229,176,0.06);
+}
+
+.text-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  resize: none;
+  height: 90px;
+  caret-color: var(--accent);
+}
+
+.text-input::placeholder {
+  color: var(--muted);
+}
+
+.input-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.char-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.input-btns {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.mic-btn, .clear-btn, .convert-btn {
+  border: none;
+  cursor: pointer;
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  border-radius: 10px;
+  transition: all 0.2s;
+}
+
+.mic-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.mic-btn:hover {
+  background: var(--border);
+}
+
+.mic-btn.recording {
+  background: rgba(255,60,60,0.15);
+  border-color: rgba(255,60,60,0.4);
+  animation: pulse-red 1s infinite;
+}
+
+@keyframes pulse-red {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,60,60,0.4); }
+  50%       { box-shadow: 0 0 0 6px rgba(255,60,60,0); }
+}
+
+.clear-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 8px 16px;
+  font-size: 0.85rem;
+}
+
+.clear-btn:hover {
+  color: var(--text);
+  background: var(--border);
+}
+
+.convert-btn {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #07080d;
+  padding: 8px 22px;
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+}
+
+.convert-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,229,176,0.3);
+}
+
+.convert-btn:active {
+  transform: translateY(0);
+}
+
+/* ================================
+   SIGNS SECTION
+================================ */
+.signs-section {
+  margin-top: 48px;
+}
+
+.signs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.signs-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.download-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 7px 16px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.download-btn:hover {
+  background: var(--border);
+}
+
+/* ================================
+   SIGNS GRID
+================================ */
+.signs-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Individual sign card */
+.sign-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(20px) scale(0.9);
+  animation: popIn 0.35s ease forwards;
+}
+
+@keyframes popIn {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.sign-img-wrap {
+  width: 80px;
+  height: 80px;
+  border-radius: 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, border-color 0.2s;
+  position: relative;
+}
+
+.sign-card:hover .sign-img-wrap {
+  transform: translateY(-4px) scale(1.05);
+  border-color: rgba(0,229,176,0.4);
+  box-shadow: 0 10px 30px rgba(0,229,176,0.15);
+}
+
+.sign-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Fallback letter shown when image missing */
+.sign-fallback {
+  font-family: 'DM Mono', monospace;
+  font-size: 2.2rem;
+  font-weight: 500;
+  color: var(--accent);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.sign-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Space card */
+.sign-card.space-card .sign-img-wrap {
+  background: transparent;
+  border-style: dashed;
+}
+
+.space-icon {
+  font-size: 1.2rem;
+  color: var(--muted);
+}
+
+/* ================================
+   EMPTY STATE
+================================ */
+.empty-state {
+  text-align: center;
+  padding: 60px 24px;
+  color: var(--muted);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
+.empty-state p {
+  font-size: 1rem;
+}
+
+/* ================================
+   TOAST
+================================ */
+.toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--accent);
+  color: #07080d;
+  padding: 12px 24px;
+  border-radius: 100px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  z-index: 999;
+  transition: transform 0.3s ease;
+  pointer-events: none;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+@media (max-width: 600px) {
+  .header {
+    padding: 16px 20px;
+  }
+
+  .main {
+    padding: 40px 16px 60px;
+  }
+
+  .hero-title {
+    font-size: 2.4rem;
+  }
+
+  .input-btns {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .sign-img-wrap {
+    width: 65px;
+    height: 65px;
+  }
+}
