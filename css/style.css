@@ -407,6 +407,29 @@ body.light .header {
   color: var(--muted);
 }
 
+/* Phrase card — bigger, accent border */
+.phrase-wrap {
+  width: 110px !important;
+  height: 110px !important;
+  border-color: rgba(0, 229, 176, 0.3) !important;
+  background: rgba(0, 229, 176, 0.05) !important;
+}
+
+.phrase-label {
+  font-size: 0.68rem !important;
+  color: var(--accent) !important;
+  max-width: 110px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sign-card.phrase-card:hover .phrase-wrap {
+  border-color: rgba(0, 229, 176, 0.7) !important;
+  box-shadow: 0 10px 30px rgba(0, 229, 176, 0.25) !important;
+}
+
 /* ================================
    EMPTY STATE
 ================================ */

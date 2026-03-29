@@ -23,6 +23,17 @@ const toast       = document.getElementById('toast');
 // Place them in:  images/
 const SUPPORTED = 'abcdefghijklmnopqrstuvwxyz0123456789';
 
+// ─── Phrase Dictionary ───────────────────────────
+// Key   = what user types (lowercase)
+// Value = image filename inside images/ folder (without .png)
+// To add more: just add a new line here + put the image in images/
+const PHRASES = {
+  "hello"       : "hello",
+  "i love you"  : "iloveyou",
+  "thank you"   : "thankyou",
+  "welcome"     : "welcome"
+};
+
 // ─── Image path builder ─────────────────────────
 function getImagePath(char) {
   return `images/${char}.png`;
@@ -38,26 +49,47 @@ function renderSigns(text) {
     return;
   }
 
-  const chars = text.toLowerCase();
+  const lower = text.toLowerCase();
   let delay   = 0;
+  let i       = 0;
 
-  for (let i = 0; i < chars.length; i++) {
-    const ch = chars[i];
+  // Phrases sorted longest-first so "thank you" matches before "thank"
+  const sortedPhrases = Object.keys(PHRASES).sort((a, b) => b.length - a.length);
+
+  while (i < lower.length) {
+    const ch = lower[i];
 
     // Space → show separator card
     if (ch === ' ') {
-      const spaceCard = createSpaceCard(delay);
-      signsGrid.appendChild(spaceCard);
+      signsGrid.appendChild(createSpaceCard(delay));
       delay += 30;
+      i++;
       continue;
     }
 
-    // Skip unsupported chars silently
-    if (!SUPPORTED.includes(ch)) continue;
+    // Try to match a known phrase starting at position i
+    let matched = false;
+    for (const phrase of sortedPhrases) {
+      if (lower.startsWith(phrase, i)) {
+        // Must end at a word boundary (space or end of string)
+        const after = lower[i + phrase.length];
+        if (after === undefined || after === ' ') {
+          signsGrid.appendChild(createPhraseCard(phrase, PHRASES[phrase], delay));
+          delay += 80;
+          i += phrase.length;
+          matched = true;
+          break;
+        }
+      }
+    }
+    if (matched) continue;
 
-    const card = createSignCard(ch, delay);
-    signsGrid.appendChild(card);
+    // Skip unsupported chars silently
+    if (!SUPPORTED.includes(ch)) { i++; continue; }
+
+    signsGrid.appendChild(createSignCard(ch, delay));
     delay += 60;
+    i++;
   }
 
   signsSection.style.display = 'block';
@@ -119,6 +151,40 @@ function createSpaceCard(delay) {
   const label = document.createElement('span');
   label.className   = 'sign-label';
   label.textContent = 'space';
+
+  card.appendChild(imgWrap);
+  card.appendChild(label);
+  return card;
+}
+
+// ─── Build a phrase card ─────────────────────────
+function createPhraseCard(phrase, imgFile, delay) {
+  const card = document.createElement('div');
+  card.className = 'sign-card phrase-card';
+  card.style.animationDelay = `${delay}ms`;
+
+  const imgWrap = document.createElement('div');
+  imgWrap.className = 'sign-img-wrap phrase-wrap';
+
+  const img = document.createElement('img');
+  img.alt     = phrase;
+  img.src     = `images/${imgFile}.png`;
+  img.loading = 'lazy';
+
+  img.onerror = function () {
+    // Image not found → show emoji fallback
+    this.remove();
+    const fb = document.createElement('span');
+    fb.className   = 'sign-fallback';
+    fb.textContent = '🤟';
+    imgWrap.appendChild(fb);
+  };
+
+  imgWrap.appendChild(img);
+
+  const label = document.createElement('span');
+  label.className   = 'sign-label phrase-label';
+  label.textContent = phrase;  // shows full phrase text as label
 
   card.appendChild(imgWrap);
   card.appendChild(label);
